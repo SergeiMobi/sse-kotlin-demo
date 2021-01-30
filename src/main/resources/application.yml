@@ -1,0 +1,8 @@
+#Local MongoDB config
+spring:
+  data:
+    mongodb:
+      authentication-database: admin
+      database: sse
+      port: 27017
+      host: localhost
