@@ -2,7 +2,7 @@ package com.mobiquity.sse.controller
 
 import com.mobiquity.sse.dto.EventDto
 import com.mobiquity.sse.service.EventService
-import com.mobiquity.sse.service.Subscriber
+import com.mobiquity.sse.service.pubsub.Subscriber
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity

@@ -1,4 +1,4 @@
-package com.mobiquity.sse.service
+package com.mobiquity.sse.service.pubsub
 
 import com.mobiquity.sse.model.EventModel
 import org.springframework.stereotype.Service

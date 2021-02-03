@@ -1,6 +1,7 @@
 package com.mobiquity.sse.service
 
 import com.mobiquity.sse.model.EventModel
+import com.mobiquity.sse.service.pubsub.Publisher
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener

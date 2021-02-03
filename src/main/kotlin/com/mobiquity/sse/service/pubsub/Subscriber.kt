@@ -1,4 +1,4 @@
-package com.mobiquity.sse.service
+package com.mobiquity.sse.service.pubsub
 
 import com.mobiquity.sse.model.EventModel
 import org.slf4j.Logger
@@ -11,21 +11,23 @@ import java.util.function.Consumer
 @Service
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 class Subscriber(pubSubService: PubSubService) {
-    val log: Logger = LoggerFactory.getLogger(this::class.java)
+    private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
-    var subscribe: Consumer<EventModel>? = null
+    private var subscribe: Consumer<EventModel>? = null
+
     init {
         pubSubService.registerSubscriber(this)
     }
 
     fun receivedMessage(pushEvent: EventModel) {
         log.debug("subscribe event is received: $pushEvent")
-            subscribe?.accept(pushEvent)
+        subscribe?.accept(pushEvent)
     }
 
     fun subscribe(consumer: Consumer<EventModel>) {
         this.subscribe = consumer
     }
+
     fun unsubscribe() {
         this.subscribe = null
     }
