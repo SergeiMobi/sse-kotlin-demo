@@ -1,6 +1,6 @@
 package com.mobiquity.sse.service
 
-import com.mobiquity.sse.model.Event
+import com.mobiquity.sse.model.EventModel
 import org.springframework.stereotype.Service
 
 @Service
@@ -8,7 +8,7 @@ class PubSubService {
 
     private val subscribers = ArrayList<Subscriber>()
 
-    fun sendMessage(event: Event) {
+    fun sendMessage(event: EventModel) {
         for (subscriber in subscribers) {
             subscriber.receivedMessage(event)
         }
