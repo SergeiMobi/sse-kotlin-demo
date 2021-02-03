@@ -27,7 +27,7 @@ class EventController constructor(
     }
 
     @GetMapping("/stream-sse-random-data")
-    fun streamSseRandomData(): SseEmitter? {
+    fun streamSseRandomData(): SseEmitter {
         val emitter = SseEmitter()
         threadPoolTaskExecutor.execute {
             try {
@@ -49,12 +49,12 @@ class EventController constructor(
     }
 
     @GetMapping("/stream-sse-timeout")
-    fun streamSseTimeout(): SseEmitter? {
+    fun streamSseTimeout(): SseEmitter {
         return SseEmitter(15 * 1000)
     }
 
     @GetMapping("/stream-sse-mongodb-push")
-    fun streamSseMongodbPush(): SseEmitter? {
+    fun streamSseMongodbPush(): SseEmitter {
         val emitter = SseEmitter() // 30 seconds by default
         threadPoolTaskExecutor.execute {
             try {
