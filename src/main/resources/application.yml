@@ -6,3 +6,6 @@ spring:
       database: sse
       port: 27017
       host: localhost
+
+logging.level:
+  com.mobiquity.sse: DEBUG

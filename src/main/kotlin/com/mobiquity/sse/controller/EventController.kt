@@ -3,23 +3,22 @@ package com.mobiquity.sse.controller
 import com.mobiquity.sse.dto.EventDto
 import com.mobiquity.sse.service.EventService
 import com.mobiquity.sse.service.Subscriber
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import java.time.LocalTime
-import java.util.concurrent.ExecutorService
 
 @RestController
 class EventController constructor(
-        val eventService: EventService, val executorService: ExecutorService, val subscriber: Subscriber) {
+        val eventService: EventService, val threadPoolTaskExecutor: ThreadPoolTaskExecutor, val subscriber: Subscriber) {
 
-    @GetMapping("/event")
-    fun getEvent(): EventDto {
-        return EventDto("test event")
-    }
+    private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
     @PostMapping("/event")
     fun addEvent(@RequestBody event: EventDto): ResponseEntity<Any> {
@@ -30,7 +29,7 @@ class EventController constructor(
     @GetMapping("/stream-sse-random-data")
     fun streamSseRandomData(): SseEmitter? {
         val emitter = SseEmitter()
-        executorService.execute {
+        threadPoolTaskExecutor.execute {
             try {
                 var i = 0
                 while (true) {
@@ -57,8 +56,9 @@ class EventController constructor(
     @GetMapping("/stream-sse-mongodb-push")
     fun streamSseMongodbPush(): SseEmitter? {
         val emitter = SseEmitter() // 30 seconds by default
-        executorService.execute {
+        threadPoolTaskExecutor.execute {
             try {
+                log.debug("Subscribe to mongodb events")
                 var pushEventNumber = 3
                 while (pushEventNumber > 0) {
                     subscriber.subscribe { pushEvent ->
@@ -73,7 +73,9 @@ class EventController constructor(
                 emitter.completeWithError(ex)
             }
             subscriber.unsubscribe()
+            log.debug("Unsubscribe from mongodb events")
             emitter.complete()
+            log.debug("Emitter complete")
         }
         return emitter
     }
