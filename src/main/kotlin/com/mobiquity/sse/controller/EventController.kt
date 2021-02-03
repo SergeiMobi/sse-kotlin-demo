@@ -2,6 +2,7 @@ package com.mobiquity.sse.controller
 
 import com.mobiquity.sse.dto.EventDto
 import com.mobiquity.sse.service.EventService
+import com.mobiquity.sse.service.Subscriber
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -13,7 +14,7 @@ import java.util.concurrent.Executors
 
 @RestController
 class EventController constructor(
-        val eventService: EventService) {
+        val eventService: EventService, val subscriber: Subscriber) {
 
     @GetMapping("/event")
     fun getEvent(): EventDto {
@@ -25,9 +26,8 @@ class EventController constructor(
         eventService.addEvent(EventDto("NewEvent"))
         return ResponseEntity.ok().build()
     }
-
-    @GetMapping("/stream-sse-mvc")
-    fun streamSseMvc(): SseEmitter? {
+    @GetMapping("/stream-sse-random-data")
+    fun streamSseRandomData(): SseEmitter? {
         val emitter = SseEmitter()
         val sseMvcExecutor = Executors.newSingleThreadExecutor()
         sseMvcExecutor.execute {
@@ -36,11 +36,34 @@ class EventController constructor(
                 while (true) {
                     val event = SseEmitter.event()
                             .data("SSE MVC - " + LocalTime.now().toString())
-                            .id(i.toString())
-                            .name("sse event - mvc")
+                            .id(i.toString()) // optional parameter
+                            .name("sse event - mvc") // optional parameter
                     emitter.send(event)
                     Thread.sleep(1000)
                     i++
+                }
+            } catch (ex: Exception) {
+                emitter.completeWithError(ex)
+            }
+        }
+        return emitter
+    }
+
+    @GetMapping("/stream-sse-mvc")
+    fun streamSseMvc(): SseEmitter? {
+        val emitter = SseEmitter()
+        val sseMvcExecutor = Executors.newSingleThreadExecutor()
+        sseMvcExecutor.execute {
+            try {
+                val isEventSent = false
+                while (!isEventSent) {
+                    subscriber.subscribe { e ->
+                        val event = SseEmitter.event()
+                            .data(e.toString())
+//                            .id(i.toString()) // optional parameter
+//                            .name("sse event - mvc") // optional parameter
+                        emitter.send(event)
+                    }
                 }
             } catch (ex: Exception) {
                 emitter.completeWithError(ex)
