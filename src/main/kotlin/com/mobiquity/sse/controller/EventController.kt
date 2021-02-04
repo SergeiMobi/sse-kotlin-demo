@@ -16,7 +16,9 @@ import java.time.LocalTime
 
 @RestController
 class EventController constructor(
-        val eventService: EventService, val threadPoolTaskExecutor: ThreadPoolTaskExecutor, val subscriber: Subscriber) {
+        val eventService: EventService,
+        val threadPoolTaskExecutor: ThreadPoolTaskExecutor,
+        val subscriber: Subscriber) {
 
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
